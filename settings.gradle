@@ -1,4 +1,4 @@
-include ':library'
+include ':library', ':superrecyclerview'
 include ':pullToRefreshListFragment'
 include ':pullToRefreshViewPager'
 include ':sample'

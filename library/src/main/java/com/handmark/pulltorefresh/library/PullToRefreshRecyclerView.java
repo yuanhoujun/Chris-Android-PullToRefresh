@@ -63,9 +63,12 @@ package com.handmark.pulltorefresh.library;
 
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
+
+import com.handmark.pulltorefresh.library.internal.LoadingLayout;
 
 /**
  * RecyclerView support pull to refresh and load more.
@@ -103,7 +106,7 @@ public class PullToRefreshRecyclerView extends PullToRefreshBase<RecyclerView> {
         if (mRefreshableView.getChildCount() <= 0) {
             return true;
         }
-        int firstVisiblePosition = mRefreshableView.getChildPosition(mRefreshableView.getChildAt(0));
+        int firstVisiblePosition = mRefreshableView.getChildLayoutPosition(mRefreshableView.getChildAt(0));
         if (firstVisiblePosition == 0) {
             return mRefreshableView.getChildAt(0).getTop() == mRefreshableView.getPaddingTop();
         }
@@ -115,12 +118,16 @@ public class PullToRefreshRecyclerView extends PullToRefreshBase<RecyclerView> {
     protected boolean isReadyForPullEnd() {
         int lastItemPosition = mRefreshableView.getChildCount() - 1;
         View lastItemView = mRefreshableView.getChildAt(lastItemPosition);
-        int lastVisiblePosition = mRefreshableView.getChildPosition(lastItemView);
+        int lastVisiblePosition = mRefreshableView.getChildLayoutPosition(lastItemView);
         // 是否是最后一个Item View
-        if (lastVisiblePosition >= mRefreshableView.getAdapter().getItemCount() - 1) {
+        if (lastVisiblePosition >= 0 && lastVisiblePosition >= mRefreshableView.getAdapter().getItemCount() - 1) {
             return mRefreshableView.getChildAt(lastItemPosition).getBottom() <= mRefreshableView.getBottom();
         }
         return false;
     }
 
+    @Override
+    protected LoadingLayout createLoadingLayout(Context context, Mode mode, TypedArray attrs) {
+        return super.createLoadingLayout(context, mode, attrs);
+    }
 }
