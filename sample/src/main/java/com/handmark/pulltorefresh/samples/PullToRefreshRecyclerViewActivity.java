@@ -25,14 +25,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
-import com.handmark.pulltorefresh.library.PullToRefreshRecyclerView;
+import com.handmark.pulltorefresh.library.SuperRecyclerView;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -45,10 +44,10 @@ public final class PullToRefreshRecyclerViewActivity extends Activity {
 
     static final int MENU_SET_MODE = 0;
 
-    private LinkedList<String> mListItems;
-    private PullToRefreshRecyclerView mPullRefreshRecyclerView;
+    private LinkedList<String> mListItems = new LinkedList<String>();
+    private SuperRecyclerView mPullRefreshRecyclerView;
     private RecyclerView mRecyclerView;
-    private ArrayAdapter<String> mAdapter;
+    private DefaultAdapter mAdapter;
 
     /**
      * Called when the activity is first created.
@@ -61,7 +60,7 @@ public final class PullToRefreshRecyclerViewActivity extends Activity {
     }
 
     private void initViews() {
-        mPullRefreshRecyclerView = (PullToRefreshRecyclerView) findViewById(R.id.pull_refresh_recycler);
+        mPullRefreshRecyclerView = (SuperRecyclerView) findViewById(R.id.pull_refresh_recycler);
         mRecyclerView = mPullRefreshRecyclerView.getRefreshableView();
 
         // Set a listener to be invoked when the list should be refreshed.
@@ -83,7 +82,9 @@ public final class PullToRefreshRecyclerViewActivity extends Activity {
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setAdapter(new DefaultAdapter());
+
+        mAdapter = new DefaultAdapter();
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     /**

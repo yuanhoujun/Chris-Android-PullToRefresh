@@ -4,4 +4,3 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     ptr:ptrHeaderBackground="@android:color/darker_gray" />
-<!-- From: file:/Users/mrsimple/dev/github/Android-PullToRefresh-sample/sample/src/main/res/layout/layout_listview_in_viewpager.xml -->

@@ -2,11 +2,11 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 16
-    buildToolsVersion "23.0.2"
+    buildToolsVersion '25.0.0'
 
     defaultConfig {
         applicationId "com.handmark.pulltorefresh.samples"
-        minSdkVersion 8
+        minSdkVersion 9
         targetSdkVersion 15
     }
 
@@ -19,8 +19,6 @@ android {
 }
 
 dependencies {
-    compile project(':library')
-    compile project(':pullToRefreshListFragment')
-    compile project(':pullToRefreshViewPager')
+    compile project(':SuperRecyclerView')
     compile 'com.android.support:support-v4:18.0.0'
 }
