@@ -10,7 +10,7 @@ import android.view.View;
  *
  * @author Scott Smith 2017-03-24 14:40
  */
-public class SuperRecyclerView extends PullToRefreshBaseV1<RecyclerView> {
+public class SuperRecyclerView extends PullToRefreshBase<RecyclerView> {
 
     public SuperRecyclerView(Context context) {
         super(context);
@@ -21,13 +21,13 @@ public class SuperRecyclerView extends PullToRefreshBaseV1<RecyclerView> {
     }
 
     @Override
-    public BaseHeaderLayout createHeaderLayout(Context context) {
-        return new DefaultHeaderLayout(context);
+    public RefreshIndictorLayout createRefreshIndictorLayout(Context context) {
+        return new DefaultRefreshIndictorLayout(context);
     }
 
     @Override
-    public BaseFooterLayout createFooterLayout(Context context) {
-        return new DefaultFooterLayout(context);
+    public LoadIndictorLayout createLoadIndictorLayout(Context context) {
+        return new DefaultLoadIndictorLayout(context);
     }
 
     @Override

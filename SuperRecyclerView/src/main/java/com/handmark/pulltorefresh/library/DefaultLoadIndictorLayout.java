@@ -3,6 +3,7 @@ package com.handmark.pulltorefresh.library;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
+import android.support.annotation.NonNull;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.ViewGroup;
@@ -14,17 +15,17 @@ import android.widget.TextView;
 import com.handmark.pulltorefresh.library.internal.Utils;
 
 /**
- * 请描述使用该类使用方法！！！
+ * Default load indictor layout
  *
- * @author Scott Smith 2017-03-24 15:39
+ * @author Scott Smith 2017-03-26 14:16
  */
-public class DefaultFooterLayout extends BaseFooterLayout {
+public class DefaultLoadIndictorLayout extends LoadIndictorLayout {
     private ImageView mIndictorImage;
     private TextView mIndictorText;
     private LinearLayout mInnerLayout;
     private AnimationDrawable mDrawable;
 
-    public DefaultFooterLayout(Context context) {
+    public DefaultLoadIndictorLayout(@NonNull Context context) {
         super(context);
         initView(context);
     }
@@ -33,7 +34,7 @@ public class DefaultFooterLayout extends BaseFooterLayout {
         mInnerLayout = new LinearLayout(context);
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT ,
                 (int) Utils.dp2px(getContext() , 60));
-        lp.gravity = Gravity.CENTER_HORIZONTAL|Gravity.TOP;
+        lp.gravity = Gravity.CENTER_HORIZONTAL|Gravity.BOTTOM;
         mInnerLayout.setLayoutParams(lp);
         mInnerLayout.setGravity(Gravity.CENTER_VERTICAL);
         mInnerLayout.setOrientation(LinearLayout.HORIZONTAL);
@@ -56,15 +57,24 @@ public class DefaultFooterLayout extends BaseFooterLayout {
 
         mIndictorImage.setBackgroundResource(R.drawable.default_loading);
         mDrawable = (AnimationDrawable) mIndictorImage.getBackground();
+
+        resetUI();
+    }
+
+    private void resetUI() {
+        if(null != mIndictorText) {
+            mIndictorText.setText(R.string.pull_down_to_refresh);
+        }
+        if(null != mIndictorImage) {
+            mIndictorImage.setBackgroundResource(R.drawable.tableview_pull_refresh_arrow_down);
+        }
+        if(null != mDrawable) {
+            mDrawable.stop();
+        }
     }
 
     @Override
-    public int getContentSize() {
-        return mInnerLayout.getHeight();
-    }
-
-    @Override
-    protected void onPullImpl(float scaleOfLayout) {
+    public void onPullToLoadMore() {
         if(null != mDrawable) {
             mDrawable.start();
         }
@@ -74,22 +84,7 @@ public class DefaultFooterLayout extends BaseFooterLayout {
     }
 
     @Override
-    protected void pullToRefreshImpl() {
-
-    }
-
-    @Override
-    protected void refreshingImpl() {
-    }
-
-    @Override
-    protected void releaseToRefreshImpl() {
-    }
-
-    @Override
-    protected void resetImpl() {
-        if(null != mDrawable) {
-            mDrawable.stop();
-        }
+    public void onReset() {
+        resetUI();
     }
 }

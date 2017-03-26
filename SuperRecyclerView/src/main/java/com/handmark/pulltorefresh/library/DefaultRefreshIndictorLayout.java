@@ -3,7 +3,7 @@ package com.handmark.pulltorefresh.library;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
-import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.ViewGroup;
@@ -13,20 +13,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.handmark.pulltorefresh.library.internal.Utils;
-import com.handmark.pulltorefresh.library.util.Logger;
 
 /**
- * 请描述使用该类使用方法！！！
+ * Default refresh indictor layout
  *
- * @author Scott Smith 2017-03-24 15:15
+ * @author Scott Smith 2017-03-26 13:45
  */
-public class DefaultHeaderLayout extends BaseHeaderLayout {
+public class DefaultRefreshIndictorLayout extends RefreshIndictorLayout {
     private ImageView mIndictorImage;
     private TextView mIndictorText;
     private LinearLayout mInnerLayout;
     private AnimationDrawable mDrawable;
 
-    public DefaultHeaderLayout(Context context) {
+    public DefaultRefreshIndictorLayout(@NonNull Context context) {
         super(context);
         initView(context);
     }
@@ -77,26 +76,23 @@ public class DefaultHeaderLayout extends BaseHeaderLayout {
     }
 
     @Override
-    public void setLastUpdatedLabel(CharSequence label) {
-    }
-
-    @Override
-    protected void onLoadingDrawableSet(Drawable imageDrawable) {
+    public void onPull(float scaleOfLayout) {
 
     }
 
     @Override
-    protected void onPullImpl(float scaleOfLayout) {
-        Logger.e("scaleOfLayout = " + scaleOfLayout);
-    }
-
-    @Override
-    protected void pullToRefreshImpl() {
+    public void onPullToRefresh() {
         mIndictorText.setText(R.string.pull_down_to_refresh);
     }
 
     @Override
-    protected void refreshingImpl() {
+    public void onReleaseToRefresh() {
+        mIndictorText.setText(R.string.release_to_refresh);
+        mIndictorImage.setBackgroundResource(R.drawable.tableview_pull_refresh_arrow_up);
+    }
+
+    @Override
+    public void onRefreshing() {
         mIndictorImage.setBackgroundResource(R.drawable.default_loading);
 
         if(null == mDrawable) {
@@ -105,17 +101,12 @@ public class DefaultHeaderLayout extends BaseHeaderLayout {
         if(!mDrawable.isRunning()) {
             mDrawable.start();
         }
+
         mIndictorText.setText(R.string.loading);
     }
 
     @Override
-    protected void releaseToRefreshImpl() {
-        mIndictorText.setText(R.string.release_to_refresh);
-        mIndictorImage.setBackgroundResource(R.drawable.tableview_pull_refresh_arrow_up);
-    }
-
-    @Override
-    protected void resetImpl() {
+    public void onReset() {
         resetUI();
     }
 }
