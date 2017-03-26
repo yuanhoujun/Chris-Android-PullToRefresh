@@ -259,20 +259,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 				if (isReadyForPull()) {
 					final float y = event.getY(), x = event.getX();
 					final float diff, oppositeDiff, absDiff;
+					diff = y - mLastMotionY;
+					oppositeDiff = x - mLastMotionX;
 
-					// We need to use the correct values, based on scroll
-					// direction
-					switch (getPullToRefreshScrollDirection()) {
-						case HORIZONTAL:
-							diff = x - mLastMotionX;
-							oppositeDiff = y - mLastMotionY;
-							break;
-						case VERTICAL:
-						default:
-							diff = y - mLastMotionY;
-							oppositeDiff = x - mLastMotionX;
-							break;
-					}
 					absDiff = Math.abs(diff);
 
 					if (absDiff > mTouchSlop && (!mFilterTouchEvents || absDiff > Math.abs(oppositeDiff))) {
@@ -544,12 +533,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		mShowViewWhileRefreshing = showView;
 	}
 
-	/**
-	 * @return Either {@link Orientation#VERTICAL} or
-	 *         {@link Orientation#HORIZONTAL} depending on the scroll direction.
-	 */
-	public abstract Orientation getPullToRefreshScrollDirection();
-
 	final void setState(State state, final boolean... params) {
 		mState = state;
 		if (DEBUG) {
@@ -601,8 +584,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	protected LoadingLayout createLoadingLayout(Context context, Mode mode, TypedArray attrs) {
-		LoadingLayout layout = mLoadingAnimationStyle.createLoadingLayout(context, mode,
-				getPullToRefreshScrollDirection(), attrs);
+		LoadingLayout layout = mLoadingAnimationStyle.createLoadingLayout(context, mode, attrs);
 		layout.setVisibility(View.INVISIBLE);
 		return layout;
 	}
@@ -923,38 +905,18 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		int pRight = getPaddingRight();
 		int pBottom = getPaddingBottom();
 
-		switch (getPullToRefreshScrollDirection()) {
-			case HORIZONTAL:
-				if (mMode.showHeaderLoadingLayout()) {
-					mHeaderLayout.setWidth(maximumPullScroll);
-					pLeft = -maximumPullScroll;
-				} else {
-					pLeft = 0;
-				}
+		if (mMode.showHeaderLoadingLayout()) {
+			mHeaderLayout.setHeight(maximumPullScroll);
+			pTop = -maximumPullScroll;
+		} else {
+			pTop = 0;
+		}
 
-				if (mMode.showFooterLoadingLayout()) {
-					mFooterLayout.setWidth(maximumPullScroll);
-					pRight = -maximumPullScroll;
-				} else {
-					pRight = 0;
-				}
-				break;
-
-			case VERTICAL:
-				if (mMode.showHeaderLoadingLayout()) {
-					mHeaderLayout.setHeight(maximumPullScroll);
-					pTop = -maximumPullScroll;
-				} else {
-					pTop = 0;
-				}
-
-				if (mMode.showFooterLoadingLayout()) {
-					mFooterLayout.setHeight(maximumPullScroll);
-					pBottom = -maximumPullScroll;
-				} else {
-					pBottom = 0;
-				}
-				break;
+		if (mMode.showFooterLoadingLayout()) {
+			mFooterLayout.setHeight(maximumPullScroll);
+			pBottom = -maximumPullScroll;
+		} else {
+			pBottom = 0;
 		}
 
 		if (DEBUG) {
@@ -968,19 +930,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		// this layout
 		LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mRefreshableViewWrapper.getLayoutParams();
 
-		switch (getPullToRefreshScrollDirection()) {
-			case HORIZONTAL:
-				if (lp.width != width) {
-					lp.width = width;
-					mRefreshableViewWrapper.requestLayout();
-				}
-				break;
-			case VERTICAL:
-				if (lp.height != height) {
-					lp.height = height;
-					mRefreshableViewWrapper.requestLayout();
-				}
-				break;
+		if (lp.height != height) {
+			lp.height = height;
+			mRefreshableViewWrapper.requestLayout();
 		}
 	}
 
@@ -1020,14 +972,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 					: View.LAYER_TYPE_NONE);
 		}
 
-		switch (getPullToRefreshScrollDirection()) {
-			case VERTICAL:
-				scrollTo(0, value);
-				break;
-			case HORIZONTAL:
-				scrollTo(value, 0);
-				break;
-		}
+		scrollTo(0, value);
 	}
 
 	/**
@@ -1117,15 +1062,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 	@SuppressWarnings("deprecation")
 	private void init(Context context, AttributeSet attrs) {
-		switch (getPullToRefreshScrollDirection()) {
-			case HORIZONTAL:
-				setOrientation(LinearLayout.HORIZONTAL);
-				break;
-			case VERTICAL:
-			default:
-				setOrientation(LinearLayout.VERTICAL);
-				break;
-		}
+		setOrientation(LinearLayout.VERTICAL);
 
 		setGravity(Gravity.CENTER);
 
@@ -1211,18 +1148,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		final int itemDimension;
 		final float initialMotionValue, lastMotionValue;
 		boolean isLoadingMore = false;
-
-		switch (getPullToRefreshScrollDirection()) {
-			case HORIZONTAL:
-				initialMotionValue = mInitialMotionX;
-				lastMotionValue = mLastMotionX;
-				break;
-			case VERTICAL:
-			default:
-				initialMotionValue = mInitialMotionY;
-				lastMotionValue = mLastMotionY;
-				break;
-		}
+		initialMotionValue = mInitialMotionY;
+		lastMotionValue = mLastMotionY;
 
 		switch (mCurrentMode) {
 			case PULL_FROM_END:
@@ -1263,25 +1190,12 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	private LinearLayout.LayoutParams getLoadingLayoutLayoutParams() {
-		switch (getPullToRefreshScrollDirection()) {
-			case HORIZONTAL:
-				return new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-						LinearLayout.LayoutParams.MATCH_PARENT);
-			case VERTICAL:
-			default:
-				return new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-						LinearLayout.LayoutParams.WRAP_CONTENT);
-		}
+		return new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+				LinearLayout.LayoutParams.WRAP_CONTENT);
 	}
 
 	private int getMaximumPullScroll() {
-		switch (getPullToRefreshScrollDirection()) {
-			case HORIZONTAL:
-				return Math.round(getWidth() / FRICTION);
-			case VERTICAL:
-			default:
-				return Math.round(getHeight() / FRICTION);
-		}
+		return Math.round(getHeight() / FRICTION);
 	}
 
 	/**
@@ -1300,16 +1214,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 			mCurrentSmoothScrollRunnable.stop();
 		}
 
-		final int oldScrollValue;
-		switch (getPullToRefreshScrollDirection()) {
-			case HORIZONTAL:
-				oldScrollValue = getScrollX();
-				break;
-			case VERTICAL:
-			default:
-				oldScrollValue = getScrollY();
-				break;
-		}
+		final int oldScrollValue = getScrollY();
 
 		if (oldScrollValue != newScrollValue) {
 			if (null == mScrollAnimationInterpolator) {
@@ -1371,13 +1276,13 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 			}
 		}
 
-		LoadingLayout createLoadingLayout(Context context, Mode mode, Orientation scrollDirection, TypedArray attrs) {
+		LoadingLayout createLoadingLayout(Context context, Mode mode, TypedArray attrs) {
 			switch (this) {
 				case ROTATE:
 				default:
-					return new RotateLoadingLayout(context, mode, scrollDirection, attrs);
+					return new RotateLoadingLayout(context, mode , attrs);
 				case FLIP:
-					return new FlipLoadingLayout(context, mode, scrollDirection, attrs);
+					return new FlipLoadingLayout(context, mode , attrs);
 			}
 		}
 	}
@@ -1565,10 +1470,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		 */
 		public void onPullUpToRefresh(final PullToRefreshBase<V> refreshView);
 
-	}
-
-	public static enum Orientation {
-		VERTICAL, HORIZONTAL;
 	}
 
 	public static enum State {

@@ -27,7 +27,6 @@ import android.view.animation.RotateAnimation;
 import android.widget.ImageView.ScaleType;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.Orientation;
 import com.handmark.pulltorefresh.library.R;
 
 @SuppressLint("ViewConstructor")
@@ -37,8 +36,8 @@ public class FlipLoadingLayout extends LoadingLayout {
 
 	private final Animation mRotateAnimation, mResetRotateAnimation;
 
-	public FlipLoadingLayout(Context context, final Mode mode, final Orientation scrollDirection, TypedArray attrs) {
-		super(context, mode, scrollDirection, attrs);
+	public FlipLoadingLayout(Context context, final Mode mode , TypedArray attrs) {
+		super(context, mode , attrs);
 
 		final int rotateAngle = mode == Mode.PULL_FROM_START ? -180 : 180;
 
@@ -125,27 +124,7 @@ public class FlipLoadingLayout extends LoadingLayout {
 	}
 
 	private float getDrawableRotationAngle() {
-		float angle = 0f;
-		switch (mMode) {
-			case PULL_FROM_END:
-				if (mScrollDirection == Orientation.HORIZONTAL) {
-					angle = 90f;
-				} else {
-					angle = 180f;
-				}
-				break;
-
-			case PULL_FROM_START:
-				if (mScrollDirection == Orientation.HORIZONTAL) {
-					angle = 270f;
-				}
-				break;
-
-			default:
-				break;
-		}
-
-		return angle;
+		return 180f;
 	}
 
 }

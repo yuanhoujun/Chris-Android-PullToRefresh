@@ -11,14 +11,13 @@ import com.handmark.pulltorefresh.library.internal.LoadingLayout;
  * @author Scott Smith 2017-03-24 15:24
  */
 public abstract class BaseHeaderLayout extends LoadingLayout {
-    public BaseHeaderLayout(Context context, PullToRefreshBase.Mode mode,
-                            PullToRefreshBase.Orientation scrollDirection, TypedArray attrs) {
-        super(context, mode, scrollDirection, attrs);
+    public BaseHeaderLayout(Context context, PullToRefreshBase.Mode mode, TypedArray attrs) {
+        super(context, mode , attrs);
         init();
     }
 
-    public BaseHeaderLayout(Context context , PullToRefreshBase.Orientation scrollDirection) {
-        this(context , PullToRefreshBase.Mode.PULL_FROM_START , scrollDirection , null);
+    public BaseHeaderLayout(Context context) {
+        this(context , PullToRefreshBase.Mode.PULL_FROM_START , null);
     }
 
     private void init() {

@@ -24,8 +24,8 @@ public class DefaultFooterLayout extends BaseFooterLayout {
     private LinearLayout mInnerLayout;
     private AnimationDrawable mDrawable;
 
-    public DefaultFooterLayout(Context context, PullToRefreshBase.Orientation scrollDirection) {
-        super(context, scrollDirection);
+    public DefaultFooterLayout(Context context) {
+        super(context);
         initView(context);
     }
 

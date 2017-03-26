@@ -104,19 +104,9 @@ public final class OverscrollHelper {
 			final float scaleFactor, final boolean isTouchEvent) {
 
 		final int deltaValue, currentScrollValue, scrollValue;
-		switch (view.getPullToRefreshScrollDirection()) {
-			case HORIZONTAL:
-				deltaValue = deltaX;
-				scrollValue = scrollX;
-				currentScrollValue = view.getScrollX();
-				break;
-			case VERTICAL:
-			default:
-				deltaValue = deltaY;
-				scrollValue = scrollY;
-				currentScrollValue = view.getScrollY();
-				break;
-		}
+		deltaValue = deltaY;
+		scrollValue = scrollY;
+		currentScrollValue = view.getScrollY();
 
 		// Check that OverScroll is enabled and that we're not currently
 		// refreshing.

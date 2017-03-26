@@ -26,8 +26,8 @@ public class DefaultHeaderLayout extends BaseHeaderLayout {
     private LinearLayout mInnerLayout;
     private AnimationDrawable mDrawable;
 
-    public DefaultHeaderLayout(Context context, PullToRefreshBase.Orientation scrollDirection) {
-        super(context, scrollDirection);
+    public DefaultHeaderLayout(Context context) {
+        super(context);
         initView(context);
     }
 

@@ -12,13 +12,13 @@ import com.handmark.pulltorefresh.library.internal.LoadingLayout;
  * @author Scott Smith 2017-03-24 15:25
  */
 public class BaseFooterLayout extends LoadingLayout {
-    public BaseFooterLayout(Context context, PullToRefreshBase.Mode mode, PullToRefreshBase.Orientation scrollDirection, TypedArray attrs) {
-        super(context, mode, scrollDirection, attrs);
+    public BaseFooterLayout(Context context, PullToRefreshBase.Mode mode , TypedArray attrs) {
+        super(context , mode , attrs);
         init();
     }
 
-    public BaseFooterLayout(Context context , PullToRefreshBase.Orientation scrollDirection) {
-        this(context , PullToRefreshBase.Mode.PULL_FROM_START , scrollDirection , null);
+    public BaseFooterLayout(Context context) {
+        this(context , PullToRefreshBase.Mode.PULL_FROM_START , null);
     }
 
     private void init() {

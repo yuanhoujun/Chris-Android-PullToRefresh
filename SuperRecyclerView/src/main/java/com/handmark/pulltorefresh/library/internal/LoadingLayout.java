@@ -37,7 +37,6 @@ import android.widget.TextView;
 
 import com.handmark.pulltorefresh.library.ILoadingLayout;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.Orientation;
 import com.handmark.pulltorefresh.library.R;
 
 @SuppressLint("ViewConstructor")
@@ -58,26 +57,16 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 	private final TextView mSubHeaderText;
 
 	protected final Mode mMode;
-	protected final Orientation mScrollDirection;
 
 	private CharSequence mPullLabel;
 	private CharSequence mRefreshingLabel;
 	private CharSequence mReleaseLabel;
 
-	public LoadingLayout(Context context, final Mode mode, final Orientation scrollDirection, TypedArray attrs) {
+	public LoadingLayout(Context context, final Mode mode, TypedArray attrs) {
 		super(context);
 		mMode = mode;
-		mScrollDirection = scrollDirection;
 
-		switch (scrollDirection) {
-			case HORIZONTAL:
-				LayoutInflater.from(context).inflate(R.layout.pull_to_refresh_header_horizontal, this);
-				break;
-			case VERTICAL:
-			default:
-				LayoutInflater.from(context).inflate(R.layout.pull_to_refresh_header_vertical, this);
-				break;
-		}
+		LayoutInflater.from(context).inflate(R.layout.pull_to_refresh_header_vertical, this);
 
 		mInnerLayout = (FrameLayout) findViewById(R.id.fl_inner);
 		mHeaderText = (TextView) mInnerLayout.findViewById(R.id.pull_to_refresh_text);
@@ -89,7 +78,7 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 
 		switch (mode) {
 			case PULL_FROM_END:
-				lp.gravity = scrollDirection == Orientation.VERTICAL ? Gravity.TOP : Gravity.LEFT;
+				lp.gravity = Gravity.TOP ;
 
 				// Load in labels
 				mPullLabel = context.getString(R.string.pull_to_refresh_from_bottom_pull_label);
@@ -99,7 +88,7 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 
 			case PULL_FROM_START:
 			default:
-				lp.gravity = scrollDirection == Orientation.VERTICAL ? Gravity.BOTTOM : Gravity.RIGHT;
+				lp.gravity = Gravity.BOTTOM ;
 
 				// Load in labels
 				mPullLabel = context.getString(R.string.pull_to_refresh_pull_label);
@@ -198,13 +187,7 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 	}
 
 	public int getContentSize() {
-		switch (mScrollDirection) {
-			case HORIZONTAL:
-				return mInnerLayout.getWidth();
-			case VERTICAL:
-			default:
-				return mInnerLayout.getHeight();
-		}
+		return mInnerLayout.getHeight();
 	}
 
 	public final void hideAllViews() {

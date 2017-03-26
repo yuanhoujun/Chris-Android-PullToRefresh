@@ -22,17 +22,12 @@ public class SuperRecyclerView extends PullToRefreshBaseV1<RecyclerView> {
 
     @Override
     public BaseHeaderLayout createHeaderLayout(Context context) {
-        return new DefaultHeaderLayout(context , getPullToRefreshScrollDirection());
+        return new DefaultHeaderLayout(context);
     }
 
     @Override
     public BaseFooterLayout createFooterLayout(Context context) {
-        return new DefaultFooterLayout(context , getPullToRefreshScrollDirection());
-    }
-
-    @Override
-    public Orientation getPullToRefreshScrollDirection() {
-        return Orientation.VERTICAL;
+        return new DefaultFooterLayout(context);
     }
 
     @Override
