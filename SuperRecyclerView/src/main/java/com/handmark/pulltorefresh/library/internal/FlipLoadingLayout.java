@@ -96,6 +96,11 @@ public class FlipLoadingLayout extends LoadingLayout {
 	}
 
 	@Override
+	protected void pullToLoadMoreImpl() {
+
+	}
+
+	@Override
 	protected void refreshingImpl() {
 		mHeaderImage.clearAnimation();
 		mHeaderImage.setVisibility(View.INVISIBLE);

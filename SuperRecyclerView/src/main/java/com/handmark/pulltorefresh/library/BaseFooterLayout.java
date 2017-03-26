@@ -56,6 +56,11 @@ public class BaseFooterLayout extends LoadingLayout {
     }
 
     @Override
+    protected void pullToLoadMoreImpl() {
+
+    }
+
+    @Override
     protected void refreshingImpl() {
 
     }

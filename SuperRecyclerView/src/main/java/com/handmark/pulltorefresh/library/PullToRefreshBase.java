@@ -218,6 +218,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	@Override
+	public boolean isLoadingMore() {
+		return mState == State.PULL_TO_LOAD_MORE;
+	}
+
+	@Override
 	public final boolean isScrollingWhileRefreshingEnabled() {
 		return mScrollingWhileRefreshingEnabled;
 	}
@@ -245,6 +250,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 				// If we're refreshing, and the flag is set. Eat all MOVE events
 				if (!mScrollingWhileRefreshingEnabled && isRefreshing()) {
 					return true;
+				}
+
+				if(isLoadingMore()) {
+					return  true;
 				}
 
 				if (isReadyForPull()) {
@@ -301,7 +310,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 	@Override
 	public final void onRefreshComplete() {
-		if (isRefreshing()) {
+		if (isRefreshing() || isLoadingMore()) {
 			setState(State.RESET);
 		}
 	}
@@ -350,6 +359,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 					if (mState == State.RELEASE_TO_REFRESH
 							&& (null != mOnRefreshListener || null != mOnRefreshListener2)) {
 						setState(State.REFRESHING, true);
+						return true;
+					}
+
+					if(mState == State.PULL_TO_LOAD_MORE) {
+						onLoading();
 						return true;
 					}
 
@@ -549,6 +563,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 			case PULL_TO_REFRESH:
 				onPullToRefresh();
 				break;
+			case PULL_TO_LOAD_MORE:
+				onPullToLoadMore();
+				break;
 			case RELEASE_TO_REFRESH:
 				onReleaseToRefresh();
 				break;
@@ -718,6 +735,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		}
 	}
 
+	protected void onPullToLoadMore() {
+		mFooterLayout.pullToLoadMore();
+	}
+
 	/**
 	 * Called when the UI has been to be updated to be in the
 	 * {@link State#REFRESHING} or {@link State#MANUAL_REFRESHING} state.
@@ -759,6 +780,30 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		} else {
 			// We're not scrolling, so just call Refresh Listener now
 			callRefreshListener();
+		}
+	}
+
+	protected void onLoading() {
+//		if (mMode.showHeaderLoadingLayout()) {
+//			mHeaderLayout.refreshing();
+//		}
+//		if (mMode.showFooterLoadingLayout()) {
+//			mFooterLayout.refreshing();
+//		}
+
+
+		// Call Refresh Listener when the Scroll has finished
+//		OnSmoothScrollFinishedListener listener = new OnSmoothScrollFinishedListener() {
+//			@Override
+//			public void onSmoothScrollFinished() {
+//				callRefreshListener();
+//			}
+//		};
+//
+//		smoothScrollTo(getFooterSize(), listener);
+
+		if(null != mOnRefreshListener2) {
+			mOnRefreshListener2.onPullUpToRefresh(this);
 		}
 	}
 
@@ -1165,6 +1210,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		final int newScrollValue;
 		final int itemDimension;
 		final float initialMotionValue, lastMotionValue;
+		boolean isLoadingMore = false;
 
 		switch (getPullToRefreshScrollDirection()) {
 			case HORIZONTAL:
@@ -1180,8 +1226,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 		switch (mCurrentMode) {
 			case PULL_FROM_END:
-				newScrollValue = Math.round(Math.max(initialMotionValue - lastMotionValue, 0) / FRICTION);
+//				newScrollValue = Math.round(Math.max(initialMotionValue - lastMotionValue, 0) / FRICTION);
 				itemDimension = getFooterSize();
+				newScrollValue = itemDimension;
+				isLoadingMore = true;
 				break;
 			case PULL_FROM_START:
 			default:
@@ -1204,8 +1252,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 					break;
 			}
 
-			if (mState != State.PULL_TO_REFRESH && itemDimension >= Math.abs(newScrollValue)) {
+			if (!isLoadingMore && itemDimension >= Math.abs(newScrollValue)) {
 				setState(State.PULL_TO_REFRESH);
+			} else if(isLoadingMore) {
+				setState(State.PULL_TO_LOAD_MORE);
 			} else if (mState == State.PULL_TO_REFRESH && itemDimension < Math.abs(newScrollValue)) {
 				setState(State.RELEASE_TO_REFRESH);
 			}
@@ -1556,7 +1606,12 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		 * When the UI is currently overscrolling, caused by a fling on the
 		 * Refreshable View.
 		 */
-		OVERSCROLLING(0x10);
+		OVERSCROLLING(0x10) ,
+
+		/**
+		 * when the UI is currently loading more
+		 */
+		PULL_TO_LOAD_MORE(0x11);
 
 		/**
 		 * Maps an int to a specific state. This is needed when saving state.

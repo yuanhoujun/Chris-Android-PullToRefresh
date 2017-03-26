@@ -139,6 +139,13 @@ public interface IPullToRefresh<T extends View> {
 	public boolean isRefreshing();
 
 	/**
+	 * Returns whether the Widget is currently in the Loading mState
+	 *
+	 * @return true if the Widget is currently refreshing
+	 */
+	boolean isLoadingMore();
+
+	/**
 	 * Returns whether the widget has enabled scrolling on the Refreshable View
 	 * while refreshing.
 	 * 

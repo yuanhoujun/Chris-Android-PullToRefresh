@@ -55,4 +55,9 @@ public abstract class BaseHeaderLayout extends LoadingLayout {
     public void setRefreshingLabel(CharSequence refreshingLabel) {}
 
     public void setReleaseLabel(CharSequence releaseLabel) {}
+
+    @Override
+    protected void pullToLoadMoreImpl() {
+
+    }
 }

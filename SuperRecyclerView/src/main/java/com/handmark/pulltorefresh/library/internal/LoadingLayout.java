@@ -237,6 +237,10 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 		pullToRefreshImpl();
 	}
 
+	public final void pullToLoadMore() {
+		pullToLoadMoreImpl();
+	}
+
 	public void refreshing() {
 		if (null != mHeaderText) {
 			mHeaderText.setText(mRefreshingLabel);
@@ -342,6 +346,8 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 	protected abstract void onPullImpl(float scaleOfLayout);
 
 	protected abstract void pullToRefreshImpl();
+
+	protected abstract void pullToLoadMoreImpl();
 
 	protected abstract void refreshingImpl();
 

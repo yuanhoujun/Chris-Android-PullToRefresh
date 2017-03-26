@@ -98,6 +98,11 @@ public class RotateLoadingLayout extends LoadingLayout {
 	}
 
 	@Override
+	protected void pullToLoadMoreImpl() {
+
+	}
+
+	@Override
 	protected void releaseToRefreshImpl() {
 		// NO-OP
 	}
