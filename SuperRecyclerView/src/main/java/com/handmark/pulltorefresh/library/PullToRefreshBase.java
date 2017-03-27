@@ -632,7 +632,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 					}
 				};
 				smoothScrollTo(-getRefreshIndictorSize() , listener);
-
 			} else {
 				smoothScrollTo(0);
 			}
@@ -750,15 +749,22 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		final int maximumPullScroll = (int) (getMaximumPullScroll() * 1.2f);
 
 		int pLeft = getPaddingLeft();
-		int pTop = getPaddingTop();
 		int pRight = getPaddingRight();
-		int pBottom = getPaddingBottom();
+
+		int pTop;
+		int pBottom;
 
 		if (mMode.showHeaderLoadingLayout()) {
 			mRefreshIndictorLayout.setHeight(maximumPullScroll);
 			pTop = -maximumPullScroll;
 		} else {
 			pTop = 0;
+		}
+
+		if (mMode.showFooterLoadingLayout()) {
+			pBottom = -maximumPullScroll;
+		} else {
+			pBottom = 0;
 		}
 
 		if (DEBUG) {
@@ -989,7 +995,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 			float scale = Math.abs(newScrollValue) / (float) itemDimension;
 			mRefreshIndictorLayout.onPull(scale);
 
-			if (itemDimension >= Math.abs(newScrollValue)) {
+			if (mState != State.PULL_TO_REFRESH && itemDimension >= Math.abs(newScrollValue)) {
 				setState(State.PULL_TO_REFRESH);
 			} else if (mState == State.PULL_TO_REFRESH && itemDimension < Math.abs(newScrollValue)) {
 				setState(State.RELEASE_TO_REFRESH);
