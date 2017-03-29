@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.handmark.pulltorefresh.library.internal.Utils;
+import com.handmark.pulltorefresh.library.util.Logger;
 
 /**
  * Default load indictor layout
@@ -34,7 +35,7 @@ public class DefaultLoadIndictorLayout extends LoadIndictorLayout {
         mInnerLayout = new LinearLayout(context);
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT ,
                 (int) Utils.dp2px(getContext() , 60));
-        lp.gravity = Gravity.CENTER_HORIZONTAL|Gravity.BOTTOM;
+        lp.gravity = Gravity.CENTER_HORIZONTAL|Gravity.TOP;
         mInnerLayout.setLayoutParams(lp);
         mInnerLayout.setGravity(Gravity.CENTER_VERTICAL);
         mInnerLayout.setOrientation(LinearLayout.HORIZONTAL);
@@ -54,6 +55,8 @@ public class DefaultLoadIndictorLayout extends LoadIndictorLayout {
         mInnerLayout.addView(mIndictorText);
 
         addView(mInnerLayout);
+        setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT , ViewGroup.LayoutParams.WRAP_CONTENT));
 
         mIndictorImage.setBackgroundResource(R.drawable.default_loading);
         mDrawable = (AnimationDrawable) mIndictorImage.getBackground();
@@ -63,10 +66,7 @@ public class DefaultLoadIndictorLayout extends LoadIndictorLayout {
 
     private void resetUI() {
         if(null != mIndictorText) {
-            mIndictorText.setText(R.string.pull_down_to_refresh);
-        }
-        if(null != mIndictorImage) {
-            mIndictorImage.setBackgroundResource(R.drawable.tableview_pull_refresh_arrow_down);
+            mIndictorText.setText(R.string.loading);
         }
         if(null != mDrawable) {
             mDrawable.stop();
@@ -81,10 +81,17 @@ public class DefaultLoadIndictorLayout extends LoadIndictorLayout {
         if(null != mIndictorText) {
             mIndictorText.setText("加载中...");
         }
+        Logger.e("触发加载更多...");
     }
 
     @Override
     public void onReset() {
         resetUI();
+        Logger.e("加载更多指示器UI重置");
+    }
+
+    @Override
+    public int getContentSize() {
+        return mInnerLayout.getHeight();
     }
 }

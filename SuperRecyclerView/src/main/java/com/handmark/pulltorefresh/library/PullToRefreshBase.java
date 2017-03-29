@@ -36,6 +36,7 @@ import android.widget.LinearLayout;
 
 import com.handmark.pulltorefresh.library.internal.Utils;
 import com.handmark.pulltorefresh.library.internal.ViewCompat;
+import com.handmark.pulltorefresh.library.util.Logger;
 
 public abstract class PullToRefreshBase<T extends View> extends LinearLayout implements IPullToRefresh<T> {
 
@@ -272,14 +273,27 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 	@Override
 	public final void onRefreshComplete() {
-		if (isRefreshing() || isLoadingMore()) {
+		if (isRefreshing()) {
 			setState(State.RESET);
 		}
 	}
 
 	@Override
-	public final boolean onTouchEvent(MotionEvent event) {
+	public void onLoadComplete() {
+		if (isLoadingMore()) {
+			setState(State.RESET);
+		}
+	}
 
+	@Override
+	protected void onScrollChanged(int l, int t, int oldl, int oldt) {
+		super.onScrollChanged(l, t, oldl, oldt);
+
+		Logger.e("t = " + t + ",oldt = " + oldt);
+	}
+
+	@Override
+	public final boolean onTouchEvent(MotionEvent event) {
 		if (!isPullToRefreshEnabled()) {
 			return false;
 		}
@@ -334,7 +348,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 					}
 
 					if(mState == State.PULL_TO_LOAD_MORE) {
-						onLoading();
 						return true;
 					}
 
@@ -520,7 +533,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	protected final int getLoadIndictorSize() {
-		return mLoadIndictorLayout.getHeight();
+		Logger.e("Load indictor size = " + mLoadIndictorLayout.getContentSize());
+		return mLoadIndictorLayout.getContentSize();
 	}
 
 	protected final RefreshIndictorLayout getRefreshIndictorLayout() {
@@ -608,6 +622,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 	protected void onPullToLoadMore() {
 		mLoadIndictorLayout.onPullToLoadMore();
+//		onLoading();
 	}
 
 	/**
@@ -763,6 +778,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 		if (mMode.showFooterLoadingLayout()) {
 			pBottom = -maximumPullScroll;
+//			pBottom = -getLoadIndictorSize();
 		} else {
 			pBottom = 0;
 		}
@@ -1003,8 +1019,17 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		}
 	}
 
-	private void loadEvent() {
-
+	/**
+	 * Actions a load event
+	 */
+	protected void loadEvent() {
+		if(mMode.showFooterLoadingLayout()) {
+			if(mState != State.PULL_TO_LOAD_MORE) {
+				setState(State.PULL_TO_LOAD_MORE);
+				callRefreshListener();
+			}
+			scrollTo(0 , getLoadIndictorSize());
+		}
 	}
 
 	private LinearLayout.LayoutParams getLoadingLayoutLayoutParams() {
@@ -1150,7 +1175,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		 * @return true if this mode wants the Loading Layout Footer to be shown
 		 */
 		public boolean showFooterLoadingLayout() {
-			return this == PULL_FROM_END || this == BOTH || this == MANUAL_REFRESH_ONLY;
+			return this == PULL_FROM_END || this == BOTH;
 		}
 
 		int getIntValue() {

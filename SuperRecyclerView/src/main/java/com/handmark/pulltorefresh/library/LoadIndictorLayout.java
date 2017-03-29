@@ -23,4 +23,11 @@ public abstract class LoadIndictorLayout extends FrameLayout {
      * 当加载更多操作完成后，会调用该方法完成UI重置
      */
     public abstract void onReset();
+
+    /**
+     * 重写该方法返回指示器有效内容大小，{@link PullToRefreshBase}会根据这个尺寸决定释放刷新距离
+     *
+     * @return 有效内容尺寸
+     */
+    public abstract int getContentSize();
 }

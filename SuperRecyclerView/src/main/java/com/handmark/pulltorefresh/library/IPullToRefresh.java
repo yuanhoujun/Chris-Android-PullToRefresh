@@ -132,6 +132,12 @@ public interface IPullToRefresh<T extends View> {
 	void onRefreshComplete();
 
 	/**
+	 * Mark the current Load as complete. Will Reset the UI and hide the
+	 * Load View
+	 */
+	void onLoadComplete();
+
+	/**
 	 * Set the Touch Events to be filtered or not. If set to true, then the View
 	 * will only use touch events where the difference in the Y-axis is greater
 	 * than the difference in the X-axis. This means that the View will not

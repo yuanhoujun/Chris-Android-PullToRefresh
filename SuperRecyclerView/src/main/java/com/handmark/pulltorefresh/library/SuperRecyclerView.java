@@ -5,19 +5,46 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.handmark.pulltorefresh.library.util.Logger;
+
 /**
  * 支持下拉刷新，上拉加载更多的RecyclerView
  *
  * @author Scott Smith 2017-03-24 14:40
  */
-public class SuperRecyclerView extends PullToRefreshBase<RecyclerView> {
+public class SuperRecyclerView extends PullToRefreshBase<EnhencedRecyclerView> {
 
     public SuperRecyclerView(Context context) {
-        super(context);
+        this(context , null);
     }
 
     public SuperRecyclerView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init(context);
+    }
+
+    private void init(Context context) {
+        initListener();
+    }
+
+    private void initListener() {
+        mRefreshableView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                Logger.e(">>>>>>> dy = " + dy);
+                if(isReadyForPullEnd() && dy > 0) {
+                    loadEvent();
+                    Logger.e("已经滑动到最底部 dy = " + dy);
+                }
+            }
+        });
     }
 
     @Override
@@ -31,8 +58,8 @@ public class SuperRecyclerView extends PullToRefreshBase<RecyclerView> {
     }
 
     @Override
-    protected RecyclerView createRefreshableView(Context context, AttributeSet attrs) {
-        return new RecyclerView(context, attrs);
+    protected EnhencedRecyclerView createRefreshableView(Context context, AttributeSet attrs) {
+        return new EnhencedRecyclerView(context, attrs);
     }
 
     @Override
