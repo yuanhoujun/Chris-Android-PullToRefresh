@@ -28,6 +28,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.handmark.pulltorefresh.library.EnhencedRecyclerView;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
@@ -46,7 +47,7 @@ public final class PullToRefreshRecyclerViewActivity extends Activity {
 
     private LinkedList<String> mListItems = new LinkedList<String>();
     private SuperRecyclerView mPullRefreshRecyclerView;
-    private RecyclerView mRecyclerView;
+    private EnhencedRecyclerView mRecyclerView;
     private DefaultAdapter mAdapter;
 
     /**
@@ -64,18 +65,18 @@ public final class PullToRefreshRecyclerViewActivity extends Activity {
         mRecyclerView = mPullRefreshRecyclerView.getRefreshableView();
 
         // Set a listener to be invoked when the list should be refreshed.
-        mPullRefreshRecyclerView.setOnRefreshListener(new OnRefreshListener2<RecyclerView>() {
+        mPullRefreshRecyclerView.setOnRefreshListener(new OnRefreshListener2<EnhencedRecyclerView>() {
 
             @Override
-            public void onPullDownToRefresh(PullToRefreshBase<RecyclerView> refreshView) {
+            public void onPullDownToRefresh(PullToRefreshBase<EnhencedRecyclerView> refreshView) {
                 Toast.makeText(PullToRefreshRecyclerViewActivity.this, "Pull Down!", Toast.LENGTH_SHORT).show();
-                new GetDataTask().execute();
+                new GetDataTask(true).execute();
             }
 
             @Override
-            public void onPullUpToRefresh(PullToRefreshBase<RecyclerView> refreshView) {
+            public void onPullUpToRefresh(PullToRefreshBase<EnhencedRecyclerView> refreshView) {
                 Toast.makeText(PullToRefreshRecyclerViewActivity.this, "Pull Up!", Toast.LENGTH_SHORT).show();
-                new GetDataTask().execute();
+                new GetDataTask(false).execute();
             }
 
         });
@@ -91,6 +92,11 @@ public final class PullToRefreshRecyclerViewActivity extends Activity {
      * 模拟耗时操作
      */
     private class GetDataTask extends AsyncTask<Void, Void, String[]> {
+        private boolean isRefresh;
+
+        public GetDataTask(boolean isRefresh) {
+            this.isRefresh = isRefresh;
+        }
 
         @Override
         protected String[] doInBackground(Void... params) {
@@ -109,7 +115,11 @@ public final class PullToRefreshRecyclerViewActivity extends Activity {
             mAdapter.notifyDataSetChanged();
 
             // Call onRefreshComplete when the list has been refreshed.
-            mPullRefreshRecyclerView.onRefreshComplete();
+            if(isRefresh) {
+                mPullRefreshRecyclerView.onRefreshComplete();
+            } else {
+                mPullRefreshRecyclerView.onLoadComplete();
+            }
 
             super.onPostExecute(result);
         }
